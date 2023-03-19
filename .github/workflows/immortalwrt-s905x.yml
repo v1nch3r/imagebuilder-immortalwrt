@@ -12,10 +12,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Run make.sh
+      - name: Run make-s905x
         run: |
-          sudo chmod +x make
-          sudo ./make
+          sudo chmod +x make-s905x
+          sudo ./make-s905x
       
       - name: Upload OpenWrt Firmware to Release
         uses: ncipollo/release-action@main
