@@ -11,7 +11,7 @@ bootfs_path="${make_path}/${bootfs_dir}"
 rootfs_path="${make_path}/${rootfs_dir}"
 
 # targets
-releases="21.02.1"
+releases="21.02.4"
 targets="armvirt"
 amlogic="s905x"
 kernel="6.0.5-flippy-78+"
