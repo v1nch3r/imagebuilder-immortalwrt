@@ -1,4 +1,4 @@
-name: Immortalwrt
+name: Immortalwrt-s905x
 
 on:
   workflow_dispatch:
