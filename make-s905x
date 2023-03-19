@@ -112,8 +112,6 @@ adjustment_rootfs () {
     cd ${kernel}/ && rm *
     find ./ -type f -name '*.ko' -exec ln -s {} ./ \;
     mv -f ${make_path}/uci-defaults/* ${rootfs_path}/etc/uci-defaults/
-    sed -i "s|post_max_size = 8M|post_max_size = 2048M|g" ${rootfs_path}/etc/php.ini
-    sed -i "s|upload_max_filesize = 2M|upload_max_filesize = 2048M|g" ${rootfs_path}/etc/php.ini   
 }
 
 adding_clash_core () {
