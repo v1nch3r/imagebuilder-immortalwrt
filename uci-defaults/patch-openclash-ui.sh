@@ -3,6 +3,7 @@
 clientui_path="/usr/lib/lua/luci/model/cbi/openclash/client.lua"
 
 patching1 () {
+    sed -i "101s|^|-- |" ${clientui_path}
     sed -i "131s|^|-- |" ${clientui_path}
     sed -i "132s|^|-- |" ${clientui_path}
     sed -i "133s|^|-- |" ${clientui_path}
