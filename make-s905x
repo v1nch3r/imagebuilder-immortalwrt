@@ -49,24 +49,29 @@ zero="immortalwrt-${releases}-${amlogic}-${kernel}.img"
 bootfs="fat32"
 rootfs="btrfs"
 
+error_msg() {
+    echo -e "${ERROR} ${1}"
+    exit 1
+}
+
 download_imagebuilder () {
-    wget ${imagebuilder_repo}
+    wget ${imagebuilder_repo} || error_msg
     tar -xJf immortalwrt-imagebuilder-* && rm -f immortalwrt-imagebuilder-*.tar.xz
     mv -f immortalwrt-imagebuilder-* ${openwrt_dir}
 }
 
 custom_packages () {
-    wget -P ${imagebuilder_path}/packages/ ${luci_app_openclash}
-    wget -P ${imagebuilder_path}/packages/ ${luci_app_netmon}
-    wget -P ${imagebuilder_path}/packages/ ${luci_app_shutdown}
-    wget -P ${imagebuilder_path}/packages/ ${luci_app_tinyfm}
-    wget -P ${imagebuilder_path}/packages/ ${luci_app_base64}
-    wget -P ${imagebuilder_path}/packages/ ${luci_app_adguardhome}
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_openclash} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_netmon} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_shutdown} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_tinyfm} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_base64} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_adguardhome} || error_msg
 }
 
 build_rootfs () {
     cd ${imagebuilder_path}
-    make image PROFILE="Default" PACKAGES="${my_packages}" FILES="files"
+    make image PROFILE="Default" PACKAGES="${my_packages}" FILES="files" || error_msg
     cd ${make_path}
 }
 
@@ -92,9 +97,9 @@ adjustment_bootfs () {
     mount ${loop_new}p2 ${rootfs_dir}/
     tar -xzvf ${make_path}/*.tar.gz -C ${bootfs_path}/
     rm -f ${make_path}/*.tar.gz
-    wget -P ${bootfs_path}/dtb/amlogic/ ${dtb_repo}
-    wget -P ${bootfs_path}/ ${boot_repo}
-    wget -O ${bootfs_path}/${bootloader_ext} ${bootloader_repo}
+    wget -P ${bootfs_path}/dtb/amlogic/ ${dtb_repo} || error_msg
+    wget -P ${bootfs_path}/ ${boot_repo} || error_msg
+    wget -O ${bootfs_path}/${bootloader_ext} ${bootloader_repo} || error_msg
     tar -xzvf ${bootfs_path}/dtb/amlogic/*.tar.gz -C ${bootfs_path}/dtb/amlogic/
     rm -f ${bootfs_path}/dtb/amlogic/*.tar.gz
     tar -xzvf ${bootfs_path}/*.tar.gz -C ${bootfs_path}/
@@ -107,7 +112,7 @@ adjustment_bootfs () {
 adjustment_rootfs () {
     tar -xzvf ${imagebuilder_path}/bin/targets/${targets}/64/*-default-rootfs.tar.gz -C ${rootfs_path}/
     cd ${rootfs_path}/lib/modules && rm -r *
-    wget ${modules_repo}
+    wget ${modules_repo} || error_msg
     tar -xzvf *.tar.gz && rm -f *.tar.gz
     cd ${kernel}/ && rm *
     find ./ -type f -name '*.ko' -exec ln -s {} ./ \;
@@ -116,11 +121,11 @@ adjustment_rootfs () {
 
 adding_clash_core () {
     cd ${rootfs_path}/etc/openclash/core/
-    wget ${clash} && gunzip *.gz
+    wget ${clash} && gunzip *.gz || error_msg
     mv -f clash-* clash && rm -f *.gz
-    wget ${clash_tun} && gunzip *.gz
+    wget ${clash_tun} && gunzip *.gz || error_msg
     mv -f clash-* clash_tun && rm -f *.gz
-    wget ${clash_meta} && gunzip *.gz
+    wget ${clash_meta} && gunzip *.gz || error_msg
     mv -f clash.* clash_meta && rm -f *.gz
 }
 
