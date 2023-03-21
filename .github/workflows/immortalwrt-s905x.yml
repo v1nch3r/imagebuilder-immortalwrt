@@ -21,7 +21,7 @@ jobs:
         uses: ncipollo/release-action@main
         if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
         with:
-          tag: 21.02.4-s905x
+          tag: 18.06-SNAPSHOT-s905x
           artifacts: "*.img.gz"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
