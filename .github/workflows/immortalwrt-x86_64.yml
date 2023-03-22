@@ -1,0 +1,27 @@
+name: Immortalwrt-x86_64
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Run make-x86_64
+        run: |
+          sudo chmod +x make-x86_64
+          sudo ./make-x86_64
+      
+      - name: Upload OpenWrt Firmware to Release
+        uses: ncipollo/release-action@main
+        if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
+        with:
+          tag: immortalwrt-x86_64
+          artifacts: "*.img.gz"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
