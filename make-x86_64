@@ -1,0 +1,81 @@
+#!/bin/sh
+#==========================================================
+
+# config path
+make_path="$(pwd)"
+openwrt_dir="openwrt"
+imagebuilder_path="${make_path}/${openwrt_dir}"
+
+# targets
+releases="21.02.1"
+username="v1nch3r"
+
+# config repo
+imagebuilder_repo="https://downloads.immortalwrt.org/releases/${releases}/targets/x86/64/immortalwrt-imagebuilder-${releases}-x86-64.Linux-x86_64.tar.xz"
+clash="https://github.com/Dreamacro/clash/releases/download/v1.14.0/clash-linux-amd64-v1.14.0.gz"
+clash_tun="https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-amd64-2023.03.18.gz"
+clash_meta="https://github.com/djoeni/Clash.Meta/releases/download/Prerelease-Alpha/clash.meta-linux-amd64-alpha-2441955.gz"
+luci_app_openclash="https://github.com/vernesong/OpenClash/releases/download/v0.45.59-beta/luci-app-openclash_0.45.59-beta_all.ipk"
+luci_app_netmon="https://github.com/helmiau/helmiwrt-packages/releases/download/ipk/luci-app-netmon_1.3_all.ipk"
+luci_app_shutdown="https://github.com/helmiau/helmiwrt-packages/releases/download/ipk/luci-app-shutdown_1.3_all.ipk"
+luci_app_tinyfm="https://github.com/helmiau/helmiwrt-packages/releases/download/ipk/luci-app-tinyfm_2.5_all.ipk"
+luci_app_base64="https://raw.githubusercontent.com/noct99/blog.vpngame.com/main/luci-app-base64_1.0_all.ipk"
+luci_app_adguardhome="https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/1.8-11/luci-app-adguardhome_1.8-11_all.ipk"
+
+# config package
+unused_packages="-luci-app-cpufreq -luci-app-turboacc -luci-app-filetransfer"
+driver_packages="kmod-usb-net-cdc-ether usb-modeswitch comgt-ncm kmod-usb-net-huawei-cdc-ncm"
+openclash_iptables="coreutils-nohup bash iptables dnsmasq-full curl ca-certificates ipset ip-full iptables-mod-tproxy iptables-mod-extra libcap libcap-bin ruby ruby-yaml kmod-tun kmod-inet-diag unzip luci-compat luci luci-base"
+my_packages="${unused_packages} luci-theme-material luci-theme-argon luci-app-argon-config luci-app-ttyd luci-app-openclash luci-app-passwall luci-app-shutdown luci-app-netmon luci-app-zerotier luci-app-base64 luci-app-adguardhome luci-app-vnstat2 luci-app-sqm sqm-scripts lsblk nano htop openssh-sftp-server ${driver_packages} ${openclash_iptables}"
+
+error_msg() {
+    echo -e "${ERROR} ${1}"
+    exit 1
+}
+
+download_imagebuilder () {
+    wget ${imagebuilder_repo} || error_msg
+    tar -xJf immortalwrt-imagebuilder-* && rm -f immortalwrt-imagebuilder-*.tar.xz
+    mv -f immortalwrt-imagebuilder-* ${openwrt_dir}
+}
+
+custom_packages () {
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_openclash} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_netmon} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_shutdown} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_tinyfm} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_base64} || error_msg
+    wget -P ${imagebuilder_path}/packages/ ${luci_app_adguardhome} || error_msg
+}
+
+custom_patch () {
+    mkdir -p ${imagebuilder_path}/files/etc/uci-defaults/
+    cp -f ${make_path}/uci-defaults/* ${imagebuilder_path}/files/etc/uci-defaults/
+}
+
+adding_clash_core () {
+    mkdir -p ${imagebuilder_path}/files/etc/openclash/core/
+    cd ${imagebuilder_path}/files/etc/openclash/core/
+    wget ${clash} && gunzip *.gz || error_msg
+    mv -f clash-* clash && rm -f *.gz
+    wget ${clash_tun} && gunzip *.gz || error_msg
+    mv -f clash-* clash_tun && rm -f *.gz
+    wget ${clash_meta} && gunzip *.gz || error_msg
+    mv -f clash.* clash_meta && rm -f *.gz
+}
+
+build_rootfs () {
+    cd ${imagebuilder_path}
+    make image PROFILE="Default" PACKAGES="${my_packages}" FILES="files" || error_msg
+    ls -a ${imagebuilder_path}/bin/targets/
+    ls -a ${imagebuilder_path}/bin/targets/x86/
+    ls -a ${imagebuilder_path}/bin/targets/x86/64/
+}
+
+download_imagebuilder
+custom_packages
+custom_patch
+adding_clash_core
+build_rootfs
+
+exit 0
