@@ -15,7 +15,7 @@ jobs:
       - name: Run make-x86_64
         run: |
           sudo apt update
-          sudo apt install qemu-utils -y
+          sudo apt install qemu-utils mkisofs -y
           sudo chmod +x make-x86_64
           sudo ./make-x86_64
       
