@@ -66,7 +66,7 @@ adding_clash_core () {
 
 build_rootfs () {
     cd ${imagebuilder_path}
-    make image PROFILE="Default" PACKAGES="${my_packages}" FILES="files" || error_msg
+    make image PROFILE="Generic" PACKAGES="${my_packages}" FILES="files" || error_msg
     ls -a ${imagebuilder_path}/bin/targets/
     ls -a ${imagebuilder_path}/bin/targets/x86/
     ls -a ${imagebuilder_path}/bin/targets/x86/64/
