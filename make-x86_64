@@ -64,18 +64,16 @@ adding_clash_core () {
     mv -f clash.* clash_meta && rm -f *.gz
 }
 
-build_rootfs () {
+build_firmware () {
     cd ${imagebuilder_path}
     make image PROFILE="generic" PACKAGES="${my_packages}" FILES="files" || error_msg
-    ls -a ${imagebuilder_path}/bin/targets/
-    ls -a ${imagebuilder_path}/bin/targets/x86/
-    ls -a ${imagebuilder_path}/bin/targets/x86/64/
+    echo "success..."
 }
 
 download_imagebuilder
 custom_packages
 custom_patch
 adding_clash_core
-build_rootfs
+build_firmware
 
 exit 0
