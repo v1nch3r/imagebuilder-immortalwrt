@@ -29,6 +29,7 @@ modules_repo="https://github.com/${username}/kernel/releases/download/${kernel}/
 clash="https://github.com/Dreamacro/clash/releases/download/v1.13.0/clash-linux-arm64-v1.13.0.gz"
 clash_tun="https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-arm64-2023.03.18.gz"
 clash_meta="https://github.com/djoeni/Clash.Meta/releases/download/Prerelease-Alpha/clash.meta-linux-arm64-alpha-2441955.gz"
+speedtest_repo="https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-aarch64.tgz"
 luci_app_openclash="https://github.com/vernesong/OpenClash/releases/download/v0.45.103-beta/luci-app-openclash_0.45.103-beta_all.ipk"
 luci_app_netmon="https://github.com/helmiau/helmiwrt-packages/releases/download/ipk/luci-app-netmon_1.3_all.ipk"
 luci_app_shutdown="https://github.com/helmiau/helmiwrt-packages/releases/download/ipk/luci-app-shutdown_1.3_all.ipk"
@@ -117,6 +118,9 @@ adjustment_rootfs () {
     cd ${kernel}/ && rm *
     find ./ -type f -name '*.ko' -exec ln -s {} ./ \;
     mv -f ${make_path}/uci-defaults/* ${rootfs_path}/etc/uci-defaults/
+    wget -P ${make_path}/ ${speedtest_repo} || error_msg
+    tar -xzvf ${make_path}/*.tgz -C ${rootfs_path}/bin/
+    rm -f ${make_path}/*.tgz && rm -f ${rootfs_path}/bin/speedtest.*
 }
 
 adding_clash_core () {
