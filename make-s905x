@@ -130,7 +130,7 @@ adding_clash_core () {
     wget ${clash_tun} && gunzip *.gz || error_msg
     mv -f clash-* clash_tun && rm -f *.gz
     wget ${clash_meta} && gunzip *.gz || error_msg
-    mv -f clash.* clash_meta && rm -f *.gz
+    mv -f Clash.* clash_meta && rm -f *.gz
 }
 
 finish_build () {
