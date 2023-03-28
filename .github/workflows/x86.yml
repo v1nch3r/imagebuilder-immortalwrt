@@ -24,6 +24,6 @@ jobs:
         if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
         with:
           tag: immortalwrt-21.02.1-x86
-          artifacts: "openwrt/bin/targets/x86/64/*"
+          artifacts: "openwrt/bin/targets/x86/generic/*"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
