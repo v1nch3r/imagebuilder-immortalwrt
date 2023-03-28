@@ -16,8 +16,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install qemu-utils mkisofs -y
-          sudo chmod +x make-x86_64
-          sudo ./make-x86_64
+          sudo chmod +x make-x86
+          sudo ./make-x86
       
       - name: Upload OpenWrt Firmware to Release
         uses: ncipollo/release-action@main
